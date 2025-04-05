@@ -1,0 +1,13 @@
+[project]
+name = "binja-mcp"
+version = "0.1.8"
+description = "A Model Context Protocol server providing tools to interact with Binary Ninja programmatically via LLMs"
+authors = [{ name = "raph0x88" }]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "mcp>=1.0.0",
+]
+
+[project.scripts]
+binja_mcp = "binja_mcp:main"
