@@ -171,9 +171,10 @@ def get_function_assembly(bv, function_name):
         return {"error": "No binary view available"}
 
     try:
-        function = bv.get_functions_by_name(function_name)[0]
-        if not function:
+        functions = bv.get_functions_by_name(function_name)
+        if not functions:
             return {"error": f"Function '{function_name}' not found"}
+        function = functions[0]
 
         blocks = _get_function_blocks(function)
 
@@ -194,9 +195,10 @@ def get_function_decompiled(bv, function_name):
         return {"error": "No binary view available"}
 
     try:
-        function = bv.get_functions_by_name(function_name)[0]
-        if not function:
+        functions = bv.get_functions_by_name(function_name)
+        if not functions:
             return {"error": f"Function '{function_name}' not found"}
+        function = functions[0]
 
         hlil = function.hlil
         if not hlil:
@@ -221,10 +223,8 @@ def get_symbols_by_name(bv, symbol_name):
         symbols = bv.get_symbols_by_name(symbol_name)
         if not symbols:
             return {"error": f"Global variable '{symbol_name}' not found"}
-        bn.log_error(f"dunha got: {symbols}")
         symbols_info = []
         for symbol in symbols:
-            bn.log_error(f"dunhersss - {symbol}")
             symbols_info.append(
                 {
                     "name": symbol.name,
@@ -244,10 +244,10 @@ def get_current_function_assembly(bv):
 
     try:
         # Get current function
-        current_function = bv.get_functions_containing(bv.offset)[0]
-        bn.log_error(f"dunha got: {current_function}")
-        if not current_function:
+        functions = bv.get_functions_containing(bv.offset)
+        if not functions:
             return {"error": "No function at current position"}
+        current_function = functions[0]
 
         blocks = _get_function_blocks(current_function)
 
@@ -269,9 +269,10 @@ def get_current_function_decompiled(bv):
 
     try:
         # Get current function
-        current_function = bv.get_functions_containing(bv.offset)[0]
-        if not current_function:
+        functions = bv.get_functions_containing(bv.offset)
+        if not functions:
             return {"error": "No function at current position"}
+        current_function = functions[0]
 
         # Get decompiled code (HLIL)
         hlil = current_function.hlil
@@ -295,9 +296,10 @@ def rename_function(bv, function_name, new_name):
         return {"error": "No binary view available"}
 
     try:
-        function = bv.get_functions_by_name(function_name)[0]
-        if not function:
+        functions = bv.get_functions_by_name(function_name)
+        if not functions:
             return {"error": f"Function '{function_name}' not found"}
+        function = functions[0]
     except Exception as e:
         return {"error": str(e)}
 
@@ -312,12 +314,13 @@ def rename_current_function(bv, new_name):
     if not bv:
         return {"error": "No binary view available"}
 
-    function = bv.get_functions_containing(bv.offset)[0]
-    if not function:
+    functions = bv.get_functions_containing(bv.offset)
+    if not functions:
         return {"error": "No function at current position"}
-
+    function = functions[0]
+    old_name = function.name
     function.name = new_name
-    return {"success": f"Function '{function.name}' renamed to '{new_name}'"}
+    return {"success": f"Function '{old_name}' renamed to '{new_name}'"}
 
 
 def rename_function_variable(bv, function_name, variable_name, new_name):
@@ -325,9 +328,10 @@ def rename_function_variable(bv, function_name, variable_name, new_name):
     if not bv:
         return {"error": "No binary view available"}
 
-    function = bv.get_functions_by_name(function_name)[0]
-    if not function:
+    functions = bv.get_functions_by_name(function_name)
+    if not functions:
         return {"error": f"Function '{function_name}' not found"}
+    function = functions[0]
 
     bv.navigate(bv.view, function.start)
 
@@ -348,9 +352,10 @@ def set_function_variable_type(bv, function_name, variable_name, new_type):
     if not bv:
         return {"error": "No binary view available"}
 
-    function = bv.get_functions_by_name(function_name)[0]
-    if not function:
+    functions = bv.get_functions_by_name(function_name)
+    if not functions:
         return {"error": f"Function '{function_name}' not found"}
+    function = functions[0]
 
     bv.navigate(bv.view, function.start)
 
